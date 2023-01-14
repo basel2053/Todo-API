@@ -1,8 +1,7 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 
 const app: express.Application = express();
 const port = process.env.PORT || 3000;
-
 app.use((req: Request, res: Response): void => {
 	res.send('<h1>hello world</h1>');
 });
