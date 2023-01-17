@@ -1,12 +1,11 @@
 import { Schema, model } from 'mongoose';
 
-interface IUser {
+export interface IUser {
 	// _id?: Types.ObjectId;
 	email: string;
 	name: string;
 	password: string;
-	profilePicUrl: string;
-	profilePicName: string;
+	_doc?: any;
 }
 
 const userSchema = new Schema<IUser>({
@@ -22,8 +21,6 @@ const userSchema = new Schema<IUser>({
 	name: {
 		type: String,
 	},
-	profilePicUrl: String,
-	profilePicName: String,
 });
 
 const User = model<IUser>('user', userSchema);
