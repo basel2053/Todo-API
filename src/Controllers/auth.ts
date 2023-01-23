@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import { validationResult } from 'express-validator';
 import User from '../Models/user';
 import signToken from '../Utilities/signToken';
 
@@ -10,10 +9,6 @@ export const signup = async (
 	res: Response
 ): Promise<void | Response> => {
 	try {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(400).json({ errors: errors.array() });
-		}
 		const { email, name, password } = req.body;
 		const hashedPassword = await bcrypt.hash(password + PEPPER, Number(SR));
 		const user = new User({ email, name, password: hashedPassword });
