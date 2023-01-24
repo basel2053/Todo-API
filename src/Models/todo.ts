@@ -2,7 +2,7 @@ import { Schema, model, Types } from 'mongoose';
 
 export interface ITodo {
 	title: string;
-	state: 'finished' | 'unfinished';
+	status: 'finished' | 'unfinished';
 	endDate: Date;
 	userId: Types.ObjectId | string;
 	groupId?: Types.ObjectId;
@@ -14,7 +14,7 @@ const todoSchema = new Schema<ITodo>(
 			required: true,
 			type: String,
 		},
-		state: {
+		status: {
 			type: String,
 			default: 'unfinished',
 		},
@@ -35,4 +35,5 @@ const todoSchema = new Schema<ITodo>(
 	{ timestamps: true }
 );
 
-export const Todo = model<ITodo>('todo', todoSchema);
+const Todo = model<ITodo>('todo', todoSchema);
+export default Todo;
