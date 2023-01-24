@@ -12,7 +12,7 @@ router.post('/', verifyToken, validateTodo, todoController.createTodo);
 
 router.delete('/:id', authToken, todoController.deleteTodo);
 
-router.patch('/:id', authToken, validateTodo);
+router.patch('/:id', authToken, validateTodo, todoController.updateTodo);
 
 // IMPORTANT  for development purpose only
 router.get('/v1/dev', verifyToken, todoController.getTodosDev);
