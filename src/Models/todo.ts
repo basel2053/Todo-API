@@ -4,8 +4,8 @@ export interface ITodo {
 	title: string;
 	state: 'finished' | 'unfinished';
 	endDate: Date;
-	groupId: Types.ObjectId;
 	userId: Types.ObjectId | string;
+	groupId?: Types.ObjectId;
 }
 
 const todoSchema = new Schema<ITodo>(
