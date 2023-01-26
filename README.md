@@ -4,6 +4,13 @@ Building a Todo API to consume with react. The application allow users to create
 
 ## Infrastructure
 
+## env variables
+
+MONGODB_URI --> connection string for mongoose
+JWT_SECRET --> JWT token secret
+PEPPER --> to add extra string when hashing a password
+SR --> number of salt rounds when hashing
+
 ## Getting Started
 
 ## Features
