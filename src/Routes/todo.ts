@@ -1,18 +1,17 @@
 import { Router } from 'express';
 import * as todoController from '../Controllers/todo';
 import verifyToken from '../middleware/verifyToken';
-import authToken from '../middleware/authorizeToken';
 import validateTodo from '../middleware/validateTodo';
 
 const router = Router();
 
-router.get('/:id', authToken, todoController.getTodos);
+router.get('/', verifyToken, todoController.getTodos);
 
 router.post('/', verifyToken, validateTodo, todoController.createTodo);
 
-router.delete('/:id', authToken, todoController.deleteTodo);
+router.delete('/', verifyToken, todoController.deleteTodo);
 
-router.patch('/:id', authToken, validateTodo, todoController.updateTodo);
+router.patch('/', verifyToken, validateTodo, todoController.updateTodo);
 
 // IMPORTANT  for development purpose only
 router.get('/v1/dev', verifyToken, todoController.getTodosDev);

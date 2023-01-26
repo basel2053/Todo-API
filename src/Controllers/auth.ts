@@ -1,18 +1,20 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import User from '../Models/user';
 import signToken from '../Utilities/signToken';
+import CustomError from '../helpers/CustomError';
 
 const { PEPPER, SR } = process.env;
 export const signup = async (
 	req: Request,
-	res: Response
+	res: Response,
+	next: NextFunction
 ): Promise<void | Response> => {
 	try {
 		const { email, name, password } = req.body;
 		const existingUser = await User.findOne({ email });
 		if (existingUser) {
-			throw new Error('Email already used');
+			return next(CustomError(409, 'Email already used'));
 		}
 		const hashedPassword = await bcrypt.hash(password + PEPPER, Number(SR));
 		const user = new User({ email, name, password: hashedPassword });
@@ -20,6 +22,7 @@ export const signup = async (
 		const token = await signToken(user);
 		res.status(200).json(`${token}`);
 	} catch (err) {
+		console.log('hey');
 		res.status(500).json(err);
 	}
 };

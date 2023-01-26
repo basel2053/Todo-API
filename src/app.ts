@@ -19,9 +19,19 @@ app.use((_req: Request, res: Response, next: NextFunction) => {
 
 app.use(authRoutes);
 app.use('/todos', todoRoutes);
-app.use((_req: Request, res: Response): void => {
+app.get('/', (_req: Request, res: Response): void => {
 	res.send('<h1>hello world</h1>');
 });
+app.use(
+	(
+		err: { statusCode: number; message: string },
+		_req: Request,
+		res: Response,
+		next: NextFunction
+	) => {
+		res.status(err.statusCode || 500).json(err.message);
+	}
+);
 
 connectDB();
 
