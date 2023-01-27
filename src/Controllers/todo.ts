@@ -16,7 +16,7 @@ export const createTodo = async (req: Request, res: Response) => {
 		const todo = new Todo({
 			title,
 			status,
-			endDate,
+			endDate: endDate ? endDate : undefined,
 			userId: res.locals.userId,
 		});
 		await todo.save();
@@ -52,6 +52,16 @@ export const updateTodo = async (req: Request, res: Response) => {
 		} else {
 			res.status(404).json('there is no such a todo');
 		}
+	} catch (err) {
+		res.status(500).json(err);
+	}
+};
+
+export const search = async (req: Request, res: Response) => {
+	try {
+		const { query } = req.body;
+		const todos = await Todo.find({ title: { $regex: query, $options: 'i' } });
+		res.status(200).json(todos);
 	} catch (err) {
 		res.status(500).json(err);
 	}

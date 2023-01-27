@@ -3,7 +3,7 @@ import { Schema, model, Types } from 'mongoose';
 export interface ITodo {
 	title: string;
 	status: 'finished' | 'unfinished';
-	endDate: Date;
+	endDate: Date | undefined;
 	userId: Types.ObjectId | string;
 	groupId?: Types.ObjectId;
 }
@@ -19,7 +19,6 @@ const todoSchema = new Schema<ITodo>(
 			default: 'unfinished',
 		},
 		endDate: {
-			required: true,
 			type: Date,
 		},
 		groupId: {

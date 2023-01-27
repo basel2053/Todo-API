@@ -13,6 +13,8 @@ router.delete('/', verifyToken, todoController.deleteTodo);
 
 router.patch('/', verifyToken, validateTodo, todoController.updateTodo);
 
+router.post('/search', verifyToken, todoController.search);
+
 // IMPORTANT  for development purpose only
 router.get('/v1/dev', verifyToken, todoController.getTodosDev);
 
