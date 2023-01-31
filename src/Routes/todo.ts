@@ -17,6 +17,8 @@ router.get('/all', verifyToken, todoController.getAllTodos);
 
 router.post('/search', verifyToken, todoController.search);
 
+router.post('/date', todoController.dateSearch);
+
 // IMPORTANT  for development purpose only
 router.get('/v1/dev', verifyToken, todoController.getTodosDev);
 

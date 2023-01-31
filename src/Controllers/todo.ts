@@ -80,7 +80,15 @@ export const search = async (req: Request, res: Response) => {
 		const { status } = req.query;
 		let todos: ITodo[];
 		let todosCount: number;
-		if (status) {
+		const { date } = req.body;
+		if (date) {
+			todosCount = await Todo.find({
+				status: status,
+			}).countDocuments();
+			todos = await Todo.find({ status: status })
+				.skip((page - 1) * todosPerPage)
+				.limit(todosPerPage);
+		} else if (status) {
 			todosCount = await Todo.find({
 				status: status,
 			}).countDocuments();
@@ -96,8 +104,19 @@ export const search = async (req: Request, res: Response) => {
 				.skip((page - 1) * todosPerPage)
 				.limit(todosPerPage);
 		}
-
 		res.status(200).json({ todos, todosCount, page });
+	} catch (err) {
+		res.status(500).json(err);
+	}
+};
+
+export const dateSearch = async (req: Request, res: Response) => {
+	try {
+		const { date } = req.body;
+		console.log(date);
+		const todos = await Todo.find({ endDate: date });
+		console.log(todos);
+		res.json('hey');
 	} catch (err) {
 		res.status(500).json(err);
 	}
