@@ -22,7 +22,6 @@ export const signup = async (
 		const token = await signToken(user);
 		res.status(200).json(`${token}`);
 	} catch (err) {
-		console.log('hey');
 		res.status(500).json(err);
 	}
 };

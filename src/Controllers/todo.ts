@@ -3,6 +3,15 @@ import Todo, { ITodo } from '../Models/todo';
 
 const todosPerPage = 6;
 
+export const getAllTodos = async (_req: Request, res: Response) => {
+	try {
+		const todos = await Todo.find({ userId: res.locals.userId });
+		res.status(200).json({ todos });
+	} catch (err) {
+		res.status(500).json(err);
+	}
+};
+
 export const getTodos = async (req: Request, res: Response) => {
 	try {
 		const page = Number(req.query.page) || 1;

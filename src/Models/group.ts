@@ -10,6 +10,7 @@ const groupSchema = new Schema({
 		required: true,
 		type: String,
 	},
+	color: String,
 	userId: {
 		required: true,
 		type: Schema.Types.ObjectId,
@@ -17,4 +18,5 @@ const groupSchema = new Schema({
 	},
 });
 
-export const Group = model<IGroup>('group', groupSchema);
+const Group = model<IGroup>('group', groupSchema);
+export default Group;

@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import connectDB from './database';
 import authRoutes from './Routes/auth';
 import todoRoutes from './Routes/todo';
+import groupRoutes from './Routes/group';
 
 dotenv.config();
 const app: express.Application = express();
@@ -19,6 +20,7 @@ app.use((_req: Request, res: Response, next: NextFunction) => {
 
 app.use(authRoutes);
 app.use('/todos', todoRoutes);
+app.use('/groups', groupRoutes);
 app.get('/', (_req: Request, res: Response): void => {
 	res.send('<h1>hello world</h1>');
 });
