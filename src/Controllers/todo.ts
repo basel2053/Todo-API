@@ -79,12 +79,26 @@ export const search = async (req: Request, res: Response) => {
 		const page = Number(req.query.page) || 1;
 		const { status } = req.query;
 		let todos: ITodo[];
-		let todosCount: number;
+		let todosCount: number | { count: number }[];
 		const { date } = req.body;
 		if (date) {
-			todosCount = await Todo.find({
-				status: status,
-			}).countDocuments();
+			todosCount = await Todo.aggregate([
+				{
+					$project: {
+						month: { $month: '$endDate' },
+						day: { $dayOfMonth: '$endDate' },
+					},
+				},
+				{
+					$match: {
+						day: new Date(date).getDate(),
+						month: new Date(date).getMonth() + 1,
+					},
+				},
+				{
+					$count: 'count',
+				},
+			]);
 
 			todos = await Todo.aggregate([
 				{
@@ -99,8 +113,8 @@ export const search = async (req: Request, res: Response) => {
 				},
 				{
 					$match: {
-						day: null,
-						month: null,
+						day: new Date(date).getDate(),
+						month: new Date(date).getMonth() + 1,
 					},
 				},
 				{
@@ -116,6 +130,8 @@ export const search = async (req: Request, res: Response) => {
 					},
 				},
 			]);
+
+			todosCount = todosCount.length > 0 ? todosCount[0].count : 0;
 		} else if (status) {
 			todosCount = await Todo.find({
 				status: status,
@@ -128,6 +144,7 @@ export const search = async (req: Request, res: Response) => {
 			todosCount = await Todo.find({
 				title: { $regex: query, $options: 'i' },
 			}).countDocuments();
+
 			todos = await Todo.find({ title: { $regex: query, $options: 'i' } })
 				.skip((page - 1) * todosPerPage)
 				.limit(todosPerPage);
