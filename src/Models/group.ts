@@ -11,11 +11,7 @@ const groupSchema = new Schema({
 		type: String,
 	},
 	color: String,
-	todos: {
-		required: true,
-		type: [Schema.Types.ObjectId],
-		ref: 'todo',
-	},
+	todos: [{ type: Schema.Types.ObjectId, ref: 'todo' }],
 	userId: {
 		required: true,
 		type: Schema.Types.ObjectId,

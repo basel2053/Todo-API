@@ -3,6 +3,7 @@ import Joi from 'joi';
 
 const groupSchema = Joi.object({
 	name: Joi.string().min(2).max(30),
+	color: Joi.number(),
 	todos: Joi.optional(),
 });
 
