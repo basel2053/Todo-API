@@ -1,6 +1,8 @@
 import Group from '../Models/group';
 import { Request, Response } from 'express';
 
+// const colors = [];
+
 export const getGroups = async (_req: Request, res: Response) => {
 	try {
 		const groups = await Group.find({ userId: res.locals.userId });
