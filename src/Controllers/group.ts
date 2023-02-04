@@ -1,12 +1,17 @@
 import Group from '../Models/group';
 import { Request, Response } from 'express';
+import { redisClient } from '../app';
 
 export const getGroups = async (_req: Request, res: Response) => {
 	try {
 		const groups = await Group.find({ userId: res.locals.userId }).populate(
 			'todos'
 		);
-		res.status(200).json(groups);
+		await redisClient.set(res.locals.userId, JSON.stringify(groups), {
+			EX: 30,
+			NX: true,
+		}); // NOTE  30 second for testing purpose
+		res.status(200).json({ fromCache: false, groups });
 	} catch (err) {
 		res.status(500).json(err);
 	}

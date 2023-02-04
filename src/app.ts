@@ -4,6 +4,7 @@ import connectDB from './database';
 import authRoutes from './Routes/auth';
 import todoRoutes from './Routes/todo';
 import groupRoutes from './Routes/group';
+import * as redis from 'redis';
 
 dotenv.config();
 const app: express.Application = express();
@@ -36,6 +37,14 @@ app.use(
 );
 
 connectDB();
+
+export let redisClient: redis.RedisClientType;
+(async () => {
+	redisClient = redis.createClient();
+	redisClient.on('error', error => console.error(`Error : ${error}`));
+
+	await redisClient.connect();
+})();
 
 app.listen(port, (): void => {
 	console.log('Serve is running on port http://localhost:' + port);
