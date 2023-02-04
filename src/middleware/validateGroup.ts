@@ -5,6 +5,7 @@ const groupSchema = Joi.object({
 	name: Joi.string().min(2).max(30),
 	color: Joi.number(),
 	todos: Joi.optional(),
+	groupId: Joi.optional(),
 });
 
 const validateGroup = async (

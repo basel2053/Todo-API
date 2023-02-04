@@ -29,7 +29,7 @@ app.use(
 		err: { statusCode: number; message: string },
 		_req: Request,
 		res: Response,
-		next: NextFunction
+		_next: NextFunction
 	) => {
 		res.status(err.statusCode || 500).json(err.message);
 	}
