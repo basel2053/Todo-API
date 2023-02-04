@@ -26,32 +26,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const dotenv = __importStar(require("dotenv"));
-const database_1 = __importDefault(require("./database"));
-const auth_1 = __importDefault(require("./Routes/auth"));
-const todo_1 = __importDefault(require("./Routes/todo"));
-const group_1 = __importDefault(require("./Routes/group"));
-dotenv.config();
-const app = (0, express_1.default)();
-const port = process.env.PORT || 3000;
-app.use(express_1.default.json());
-app.use((_req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-    next();
-});
-app.use(auth_1.default);
-app.use('/todos', todo_1.default);
-app.use('/groups', group_1.default);
-app.get('/', (_req, res) => {
-    res.send('<h1>hello world</h1>');
-});
-app.use((err, _req, res, _next) => {
-    res.status(err.statusCode || 500).json(err.message);
-});
-(0, database_1.default)();
-app.listen(port, () => {
-    console.log('Serve is running on port http://localhost:' + port);
-});
+const express_1 = require("express");
+const groupsController = __importStar(require("../Controllers/group"));
+const verifyToken_1 = __importDefault(require("../middleware/verifyToken"));
+const validateGroup_1 = __importDefault(require("../middleware/validateGroup"));
+const router = (0, express_1.Router)();
+router.get('/', verifyToken_1.default, groupsController.getGroups);
+router.post('/', verifyToken_1.default, validateGroup_1.default, groupsController.createGroup);
+router.delete('/', verifyToken_1.default, groupsController.deleteGroup);
+router.patch('/', verifyToken_1.default, validateGroup_1.default, groupsController.updateGroup);
+exports.default = router;

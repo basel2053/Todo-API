@@ -21,7 +21,7 @@ export const createGroup = async (req: Request, res: Response) => {
 		}: { name: string; color: number; todos: string[] } = req.body;
 		const group = new Group({ name, color, todos, userId: res.locals.userId });
 		await group.save();
-		res.status(200).json('group created sucessfully!');
+		res.status(200).json({ msg: 'group created sucessfully!', id: group._id });
 	} catch (err) {
 		res.status(500).json(err);
 	}
@@ -32,6 +32,7 @@ export const deleteGroup = async (req: Request, res: Response) => {
 		const userId = res.locals.userId;
 		const { groupId } = req.body;
 		const group = await Group.findById(groupId);
+
 		if (group && group.userId == userId) {
 			await Group.findByIdAndDelete(groupId);
 			res.status(200).json('group is deleted sucessfully!');

@@ -37,7 +37,7 @@ export const createTodo = async (req: Request, res: Response) => {
 			userId: res.locals.userId,
 		});
 		await todo.save();
-		res.status(200).json('todo is created sucessfully!');
+		res.status(200).json({ msg: 'todo created sucessfully!', id: todo._id });
 	} catch (err) {
 		res.status(500).json(err);
 	}

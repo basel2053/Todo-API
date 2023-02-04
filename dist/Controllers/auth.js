@@ -32,7 +32,6 @@ const signup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         res.status(200).json(`${token}`);
     }
     catch (err) {
-        console.log('hey');
         res.status(500).json(err);
     }
 });

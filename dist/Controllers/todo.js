@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTodosDev = exports.search = exports.updateTodo = exports.deleteTodo = exports.createTodo = exports.getTodos = exports.getAllTodos = void 0;
 const todo_1 = __importDefault(require("../Models/todo"));
 const todosPerPage = 6;
-const getAllTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllTodos = (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const todos = yield todo_1.default.find({ userId: res.locals.userId });
         res.status(200).json({ todos });
@@ -100,7 +100,58 @@ const search = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { status } = req.query;
         let todos;
         let todosCount;
-        if (status) {
+        const { date } = req.body;
+        if (date) {
+            todosCount = yield todo_1.default.aggregate([
+                {
+                    $project: {
+                        month: { $month: '$endDate' },
+                        day: { $dayOfMonth: '$endDate' },
+                    },
+                },
+                {
+                    $match: {
+                        day: new Date(date).getDate(),
+                        month: new Date(date).getMonth() + 1,
+                    },
+                },
+                {
+                    $count: 'count',
+                },
+            ]);
+            todos = yield todo_1.default.aggregate([
+                {
+                    $project: {
+                        month: { $month: '$endDate' },
+                        day: { $dayOfMonth: '$endDate' },
+                        _id: 1,
+                        title: 1,
+                        status: 1,
+                        endDate: 1,
+                    },
+                },
+                {
+                    $match: {
+                        day: new Date(date).getDate(),
+                        month: new Date(date).getMonth() + 1,
+                    },
+                },
+                {
+                    $skip: (page - 1) * todosPerPage,
+                },
+                {
+                    $limit: todosPerPage,
+                },
+                {
+                    $project: {
+                        day: 0,
+                        month: 0,
+                    },
+                },
+            ]);
+            todosCount = todosCount.length > 0 ? todosCount[0].count : 0;
+        }
+        else if (status) {
             todosCount = yield todo_1.default.find({
                 status: status,
             }).countDocuments();
