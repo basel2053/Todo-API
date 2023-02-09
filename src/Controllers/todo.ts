@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import Todo, { ITodo } from '../Models/todo';
+import assignNotification from '../Utilities/assignNotification';
+import cancelNotification from '../Utilities/cancelNotification';
 
 const todosPerPage = 6;
 
@@ -37,6 +39,15 @@ export const createTodo = async (req: Request, res: Response) => {
 			userId: res.locals.userId,
 		});
 		await todo.save();
+		if (endDate) {
+			assignNotification(
+				todo._id.toString(),
+				new Date(endDate),
+				title,
+				res.locals.userId,
+				false
+			);
+		}
 		res.status(200).json({ msg: 'todo created sucessfully!', id: todo._id });
 	} catch (err) {
 		res.status(500).json(err);
@@ -50,6 +61,7 @@ export const deleteTodo = async (req: Request, res: Response) => {
 		const todo = await Todo.findById(todoId);
 		if (todo && todo.userId == userId) {
 			await Todo.findByIdAndDelete(todoId);
+			cancelNotification(todo._id.toString());
 			res.status(200).json('todo is deleted sucessfully!');
 		} else {
 			res.status(404).json('there is no such a todo');
@@ -65,6 +77,15 @@ export const updateTodo = async (req: Request, res: Response) => {
 		const todo = await Todo.findById(todoId);
 		if (todo && todo.userId == userId) {
 			await Todo.findByIdAndUpdate(todoId, { $set: req.body });
+			if (req.body.endDate) {
+				assignNotification(
+					todo._id.toString(),
+					new Date(req.body.endDate),
+					req.body.title,
+					res.locals.userId,
+					true
+				);
+			}
 			res.status(200).json('todo is updated sucessfully!');
 		} else {
 			res.status(404).json('there is no such a todo');
