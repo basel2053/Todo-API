@@ -1,5 +1,7 @@
 import schedule from 'node-schedule';
 import Notification from '../Models/notification';
+import User from '../Models/user';
+import sendMail from './sendmail';
 
 const assignNotification = (
 	todoId: string,
@@ -16,11 +18,23 @@ const assignNotification = (
 		todoId,
 		new Date(date.getTime() - minutes * 60000),
 		async () => {
-			const notification = new Notification({
-				message: `Remember to finish your todo: ${todoTitle}`,
-				userId,
-			});
-			await notification.save();
+			try {
+				const notification = new Notification({
+					message: `Remember to finish your todo: ${todoTitle}`,
+					userId,
+				});
+				await notification.save();
+				const user = await User.findById(userId);
+				const to = user?.email as string;
+				const from = 'ogswebproject@gmail.com';
+				const subject = 'Todo Reminder';
+				const output = `
+        <p>Remember to finish your todo: ${todoTitle}</p>
+        `;
+				sendMail(to, from, subject, output);
+			} catch (err) {
+				console.log(err);
+			}
 		}
 	);
 };

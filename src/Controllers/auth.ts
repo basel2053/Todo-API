@@ -41,7 +41,7 @@ export const login = async (
 			return res.status(422).json('Wrong Credentials');
 		}
 		const token = await signToken(user);
-		res.status(200).json(token);
+		res.status(200).json({ token, userId: user._id });
 	} catch (err) {
 		res.status(500).json(err);
 	}

@@ -45,7 +45,6 @@ export let redisClient: redis.RedisClientType;
 
 	await redisClient.connect();
 })();
-
 app.listen(port, (): void => {
-	console.log('Serve is running on port http://localhost:' + port);
+	console.log('Server is running on port http://localhost:' + port);
 });
