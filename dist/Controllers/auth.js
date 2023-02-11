@@ -48,7 +48,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(422).json('Wrong Credentials');
         }
         const token = yield (0, signToken_1.default)(user);
-        res.status(200).json(token);
+        res.status(200).json({ token, userId: user._id });
     }
     catch (err) {
         res.status(500).json(err);

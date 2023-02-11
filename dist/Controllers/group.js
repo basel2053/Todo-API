@@ -14,10 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateGroup = exports.deleteGroup = exports.createGroup = exports.getGroups = void 0;
 const group_1 = __importDefault(require("../Models/group"));
+const app_1 = require("../app");
 const getGroups = (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const groups = yield group_1.default.find({ userId: res.locals.userId }).populate('todos');
-        res.status(200).json(groups);
+        yield app_1.redisClient.set(res.locals.userId, JSON.stringify(groups), {
+            EX: 30,
+            NX: true,
+        }); // NOTE  30 second for testing purpose
+        res.status(200).json({ fromCache: false, groups });
     }
     catch (err) {
         res.status(500).json(err);
@@ -29,7 +34,7 @@ const createGroup = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const { name, todos, color, } = req.body;
         const group = new group_1.default({ name, color, todos, userId: res.locals.userId });
         yield group.save();
-        res.status(200).json('group created sucessfully!');
+        res.status(200).json({ msg: 'group created sucessfully!', id: group._id });
     }
     catch (err) {
         res.status(500).json(err);

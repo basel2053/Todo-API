@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTodosDev = exports.search = exports.updateTodo = exports.deleteTodo = exports.createTodo = exports.getTodos = exports.getAllTodos = void 0;
 const todo_1 = __importDefault(require("../Models/todo"));
+const assignNotification_1 = __importDefault(require("../Utilities/assignNotification"));
+const cancelNotification_1 = __importDefault(require("../Utilities/cancelNotification"));
 const todosPerPage = 6;
 const getAllTodos = (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -51,7 +53,10 @@ const createTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             userId: res.locals.userId,
         });
         yield todo.save();
-        res.status(200).json('todo is created sucessfully!');
+        if (endDate) {
+            (0, assignNotification_1.default)(todo._id.toString(), new Date(endDate), title, res.locals.userId, false);
+        }
+        res.status(200).json({ msg: 'todo created sucessfully!', id: todo._id });
     }
     catch (err) {
         res.status(500).json(err);
@@ -65,6 +70,7 @@ const deleteTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const todo = yield todo_1.default.findById(todoId);
         if (todo && todo.userId == userId) {
             yield todo_1.default.findByIdAndDelete(todoId);
+            (0, cancelNotification_1.default)(todo._id.toString());
             res.status(200).json('todo is deleted sucessfully!');
         }
         else {
@@ -83,6 +89,9 @@ const updateTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const todo = yield todo_1.default.findById(todoId);
         if (todo && todo.userId == userId) {
             yield todo_1.default.findByIdAndUpdate(todoId, { $set: req.body });
+            if (req.body.endDate) {
+                (0, assignNotification_1.default)(todo._id.toString(), new Date(req.body.endDate), req.body.title, res.locals.userId, true);
+            }
             res.status(200).json('todo is updated sucessfully!');
         }
         else {

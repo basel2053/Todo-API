@@ -22,18 +22,30 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const groupsController = __importStar(require("../Controllers/group"));
-const verifyToken_1 = __importDefault(require("../middleware/verifyToken"));
-const validateGroup_1 = __importDefault(require("../middleware/validateGroup"));
-const cacheGroups_1 = __importDefault(require("../middleware/cacheGroups"));
-const router = (0, express_1.Router)();
-router.get('/', verifyToken_1.default, cacheGroups_1.default, groupsController.getGroups);
-router.post('/', verifyToken_1.default, validateGroup_1.default, groupsController.createGroup);
-router.delete('/', verifyToken_1.default, groupsController.deleteGroup);
-router.patch('/', verifyToken_1.default, validateGroup_1.default, groupsController.updateGroup);
-exports.default = router;
+const mail_1 = __importDefault(require("@sendgrid/mail"));
+const dotenv = __importStar(require("dotenv"));
+dotenv.config();
+mail_1.default.setApiKey(String(process.env.SENDGRID_KEY));
+const sendMail = (to, from, subject, text) => __awaiter(void 0, void 0, void 0, function* () {
+    const msg = {
+        to,
+        from,
+        subject,
+        html: text,
+    };
+    yield mail_1.default.send(msg);
+});
+exports.default = sendMail;
